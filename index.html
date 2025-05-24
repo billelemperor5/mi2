@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmperMI 2.0 - نظام الإنذارات والعقوبات</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2962ff; 
+      --primary-hover-color: #0039cb;
+      --secondary-color: #6c757d;
+      --secondary-hover-color: #545b62;
+      --light-bg: #f8f9fa;
+      --dark-text: #212529;
+      --light-text: #ffffff;
+      --border-color: #dee2e6;
+      --shadow-sm: 0 .125rem .25rem rgba(0,0,0,.075);
+      --shadow-md: 0 .5rem 1rem rgba(0,0,0,.15);
+      --border-radius: .375rem; 
+      --font-family-base: 'Tajawal', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      background-image: url('images/walpaper01.png'); 
+      background-size: cover;                       
+      background-position: center center;           
+      background-repeat: no-repeat;                 
+      background-attachment: fixed;                 
+      color: var(--dark-text);
+      line-height: 1.6;
+      overflow-x: hidden; 
+      margin: 0; 
+    }
+
+    /* START: Professional Splash Screen Redesign */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #splashScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #1e222b; 
+      color: var(--light-text);
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      align-items: center; 
+      text-align: center;
+      z-index: 10000;
+      font-family: var(--font-family-base);
+      opacity: 1;
+      transition: opacity 0.7s ease-in-out;
+      padding: 20px; 
+      box-sizing: border-box;
+    }
+
+    #splashScreen.hidden {
+      opacity: 0;
+      pointer-events: none; 
+    }
+
+    .splash-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .splash-logo {
+      max-width: 130px; 
+      margin-bottom: 20px;
+      border-radius: 8px; 
+      animation: scaleIn 0.7s cubic-bezier(0.390, 0.575, 0.565, 1.000) 0.2s backwards;
+    }
+
+    .splash-title { 
+      font-size: 2.6em; 
+      font-weight: 700; 
+      color: #f0f0f0; 
+      margin-bottom: 8px;
+      text-shadow: 0px 2px 4px rgba(0,0,0,0.25);
+      letter-spacing: 0.5px;
+      animation: fadeInUp 0.6s ease-out 0.5s backwards;
+    }
+
+    .splash-tagline { 
+      font-size: 1.15em;
+      color: #b0b0b0; 
+      margin-bottom: 35px; 
+      font-family: 'Amiri', serif;
+      animation: fadeInUp 0.6s ease-out 0.7s backwards;
+    }
+    
+    .loading-spinner { 
+      border: 3px solid rgba(255, 255, 255, 0.2); 
+      border-top-color: #FFF; 
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin 0.9s linear infinite, fadeIn 0.5s ease-out 0.9s backwards;
+    }
+
+    .splash-developer-info { 
+      position: absolute; 
+      bottom: 25px;
+      left: 0; 
+      width: 100%;
+      text-align: center;
+      font-size: 0.85em;
+      color: #888;
+      animation: fadeIn 0.6s ease-out 1.1s backwards;
+    }
+    .splash-developer-info strong {
+      color: #aaa;
+    }
+    /* END: Professional Splash Screen Redesign */
+
+
+    /* Initial state for other main containers - ensure they are hidden */
+    #welcomeScreen, #app-container {
+      display: none;
+    }
+
+    /* Welcome Screen Styling */
+    #welcomeScreen {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-image: url('images/walpaper.png'); 
+      background-size: cover; 
+      background-position: center center; 
+      background-repeat: no-repeat; 
+      padding: 20px;
+      text-align: center;
+      position: relative; 
+    }
+
+    #welcomeScreen .welcome-container {
+      background: rgba(30, 30, 40, 0.85); 
+      backdrop-filter: blur(8px); 
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 40px 50px; 
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35); 
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+      max-width: 700px; 
+      z-index: 2; 
+      position: relative; 
+    }
+
+    .logo-img { 
+      max-width: 180px; 
+      margin-bottom: 20px;
+    }
+
+    .welcome-message {
+      font-size: 2.8em; 
+      color: var(--light-text);
+      font-weight: 800;
+      margin-bottom: 10px; 
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.7); 
+    }
+    .welcome-subtitle {
+      font-size: 1.3em; 
+      color: #dadada; 
+      margin-bottom: 25px; 
+      font-family: 'Amiri', serif;
+       text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .description-box {
+      background: rgba(10,10,20,0.55); 
+      border: none;
+      padding: 20px 25px; 
+      border-radius: 15px;
+      margin-bottom: 35px; 
+    }
+
+    .description {
+      font-size: 1.1em; 
+      color: #cccccc; 
+      line-height: 1.65;
+      font-family: 'Amiri', serif;
+       text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    
+    /* START: Button styling for Welcome Screen */
+    #welcomeScreen .btn-enter {
+      background-color: #f1c40f; 
+      border: none;
+      color: #333333; 
+      padding: 12px 30px; 
+      font-size: 1.15em;  
+      font-weight: bold;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25); 
+    }
+    #welcomeScreen .btn-enter:hover {
+      background-color: #e6b800; 
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
+      color: #2c2c2c;
+    }
+
+    #welcomeScreen .btn-info, 
+    #welcomeScreen .btn-secondary {
+        background-color: rgba(70, 75, 85, 0.65); 
+        border: 1px solid rgba(255, 255, 255, 0.12); 
+        color: var(--light-text); 
+        border-radius: 50px;
+        padding: 10px 20px; 
+        font-size: 0.9em;   
+        transition: all 0.3s ease;
+        font-weight: 500; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+    }
+    #welcomeScreen .btn-info:hover,
+    #welcomeScreen .btn-secondary:hover {
+        background-color: rgba(85, 90, 100, 0.75);
+        transform: translateY(-2px);
+        border-color: rgba(255,255,255,0.2);
+    }
+    /* END: Button styling for Welcome Screen */
+
+    /* App Container Styling */
+    .container.app-main-container {
+      background-color: #ffffff; 
+      border-radius: 18px;
+      box-shadow: 0 12px 35px rgba(41,98,255,0.1), 0 3px 8px rgba(0,0,0,0.06);
+      padding: 40px;
+      margin-top: 50px; 
+      margin-bottom: 50px; 
+      max-width: 900px; 
+    }
+
+    .app-title-wrapper {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    h2.app-title {
+      color: var(--primary-color);
+      font-weight: 700;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--primary-color);
+      display: inline-block;
+    }
+    h2.app-title i {
+      margin-right: 10px;
+      margin-left: 0;
+    }
+
+    label {
+      font-weight: bold;
+      color: #555;
+      margin-bottom: .5rem;
+      font-size: 0.95em;
+    }
+    .form-control, .form-select {
+      border-radius: var(--border-radius);
+      border: 1px solid #ced4da;
+      padding: .75rem 1rem;
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background-color: var(--light-bg);
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 0.2rem rgba(41,98,255,0.25);
+      background-color: #fff;
+    }
+
+    .btn { 
+        border-radius: var(--border-radius);
+        padding: .65rem 1.25rem;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        letter-spacing: 0.5px;
+    }
+    .btn-primary { 
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: var(--light-text);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-hover-color);
+      border-color: var(--primary-hover-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(41,98,255,0.3);
+    }
+     .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: var(--light-text);
+        transform: translateY(-2px);
+    }
+    .btn-danger {
+      background-color: #dc3545; border-color: #dc3545; color: var(--light-text);
+    }
+    .btn-danger:hover {
+        background-color: #c82333; border-color: #bd2130;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220,53,69,0.3);
+    }
+    .btn-warning { color: var(--dark-text) !important; }
+    .btn-warning:hover { transform: translateY(-2px); }
+    
+    .btn-info:not(#welcomeScreen .btn-info) { 
+        background-color: #5483db; 
+        border-color: #7b2be4;
+        color: var(--light-text);
+    }
+     .btn-secondary:not(#welcomeScreen .btn-secondary) { 
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: var(--light-text);
+     }
+     .btn-secondary:not(#welcomeScreen .btn-secondary):hover {
+        background-color: var(--secondary-hover-color);
+        border-color: var(--secondary-hover-color);
+        transform: translateY(-2px);
+     }
+
+    .modal-content {
+        border-radius: 15px;
+        border: none;
+        box-shadow: var(--shadow-md);
+    }
+    .modal-header {
+        background-color: var(--primary-color);
+        color: var(--light-text);
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        padding: 1rem 1.5rem;
+    }
+    .modal-header .modal-title {
+        font-weight: 600;
+        font-size: 1.25rem;
+    }
+    .modal-header .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+    .modal-body {
+        padding: 1.5rem;
+    }
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        background-color: #f1f3f5;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+    }
+
+    .alert-item {
+      background-color: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 10px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .alert-item:last-child { border-bottom: 1px solid var(--border-color); }
+    .alert-item:hover {
+      background-color: #f8f9fc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,.1);
+    }
+    .alert-type { font-weight: bold; color: var(--primary-color); }
+
+    #alertsModalList .btn-sm {
+        padding: .35rem .8rem;
+        font-size: .875rem;
+    }
+    #alertsModalList .btn-sm i {
+        margin-right: 3px;
+        margin-left: 0;
+    }
+
+    .nav-tabs .nav-link {
+        color: var(--secondary-color);
+        font-weight: 500;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+         padding: .75rem 1.25rem;
+    }
+    .nav-tabs .nav-link.active {
+        color: var(--primary-color);
+        background-color: #fff;
+        border-color: var(--border-color) var(--border-color) #fff;
+        font-weight: bold;
+    }
+    .tab-content {
+        border: 1px solid var(--border-color);
+        border-top: none;
+        padding: 1.5rem;
+        border-radius: 0 0 var(--border-radius) var(--border-radius);
+        background-color: #fff;
+    }
+    #settingsModal .btn i, #violationTypesList .btn i, #employeeListDiv .btn i, #customPatternsList .btn i {
+        margin-right: 0;
+    }
+    #settingsModal .btn span + i, #violationTypesList .btn span + i, #employeeListDiv .btn span + i, #customPatternsList .btn span + i {
+        margin-left: 5px;
+    }
+
+    .warning { color: #ffc107; }
+    .penalty { color: #e74c3c; }
+    .success { color: #198754; }
+
+    .btn i {
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+    html[dir="rtl"] .btn i {
+        margin-right: 5px;
+        margin-left: 0;
+    }
+    html[dir="rtl"] .btn i.fa-fw {
+        text-align: center;
+    }
+     html[dir="rtl"] .btn-sm i {
+        margin-right: 3px;
+        margin-left: 0;
+    }
+    html[dir="rtl"] .btn > i:first-child:not(:last-child) {
+        margin-left: 5px;
+        margin-right: 0;
+    }
+
+    #employeeMonitoringList .list-group-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1.25rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 8px;
+        transition: background-color 0.2s ease;
+    }
+    #employeeMonitoringList .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    #employeeMonitoringList .employee-name {
+        font-weight: 500;
+    }
+
+    #employeeMonitoringList .violation-count {
+        font-size: 0.9em;
+        padding: .3em .6em;
+    }
+
+    #employeeMonitoringList .list-group-item.list-group-item-danger {
+      border-left-width: 1px !important;
+    }
+    html[dir="rtl"] #employeeMonitoringList .list-group-item.list-group-item-danger {
+        border-right-width: 5px !important;
+        border-left-width: 1px !important;
+    }
+    #employeeMonitoringList .list-group-item.list-group-item-danger .employee-name {
+        color: var(--bs-danger-text-emphasis);
+    }
+    #employeeMonitoringList .list-group-item .btn i {
+        margin-left: 0;
+    }
+    html[dir="rtl"] #employeeMonitoringList .list-group-item .btn i {
+        margin-right: 0;
+    }
+
+
+    #smartAnalysisModal .modal-header.bg-info .modal-title,
+    #smartAnalysisModal .modal-header.bg-info i {
+        color: var(--dark-text) !important;
+    }
+    #smartAnalysisModal .modal-header.bg-info .btn-close-dark {
+        filter: brightness(0.5);
+    }
+     .btn-close-dark {
+        filter: none;
+    }
+
+    #employeeAnalysisDetailModal .modal-header.bg-warning .modal-title,
+    #employeeAnalysisDetailModal .modal-header.bg-warning i {
+        color: var(--dark-text) !important;
+    }
+    #employeeAnalysisDetailModal .modal-header.bg-warning .btn-close-dark {
+        filter: brightness(0.5);
+    }
+    #employeeAnalysisDetailContent .employee-analysis-card {
+        margin-bottom: 0;
+        box-shadow: none;
+        border: none;
+        background-color: transparent;
+        padding:0;
+    }
+    .sms-simulation-box {
+        background-color: #e9ecef;
+        border: 1px dashed #adb5bd;
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin-top: 0.75rem;
+    }
+    .sms-simulation-box .sms-to-maryam {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    .sms-simulation-box .sms-content-to-copy {
+        background-color: #fff;
+        padding: 0.5rem;
+        border-radius: .25rem;
+        font-family: monospace;
+        border: 1px solid #ccc;
+        margin-top: 0.5rem;
+        white-space: pre-wrap;
+        cursor: pointer;
+    }
+    .sms-simulation-box .sms-content-to-copy:hover {
+        background-color: #f0f0f0;
+    }
+
+    .print-title-blue { color: var(--primary-color) !important; }
+    .print-title-black { color: #000000 !important; }
+
+  </style>
+</head>
+<body>
+
+  <div id="splashScreen">
+    <div class="splash-content">
+      <img src="images/bouraba.png" alt="شعار المطور بلال بورابعة" class="splash-logo">
+      <h1 class="splash-title">EmperMI 2.0</h1>
+      <p class="splash-tagline">نظام إدارة الإنذارات والعقوبات المطور</p>
+      <div class="loading-spinner"></div>
+    </div>
+    <p class="splash-developer-info">تطوير: <strong>بلال بورابعة</strong></p>
+  </div>
+
+  <div id="welcomeScreen">
+    <div class="welcome-container">
+      <img src="images/logo.png" alt="EmperMI Logo" class="logo-img">
+      <h1 class="welcome-message">EmperMI 2.0</h1>
+      <p class="welcome-subtitle">مرحباً بك في نظام الإنذارات والعقوبات المطور</p>
+      <div class="description-box">
+        <p class="description">
+          هذا النظام مصمم خصيصاً لإدارة فعالة وشفافة لعمليات الإنذار والعقوبات داخل المؤسسة. يهدف إلى تنظيم وتسهيل متابعة المخالفات والمكافآت، وضمان تطبيق عادل للوائح والقوانين.
+        </p>
+      </div>
+      <div class="d-flex flex-nowrap justify-content-center gap-3 mt-4">
+        <button onclick="goToApp()" class="btn btn-enter"><i class="fas fa-sign-in-alt"></i>الدخول إلى النظام</button>
+        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#aboutModal"><i class="fas fa-info-circle"></i>نبذة عن النظام</button>
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#settingsModal"><i class="fas fa-cog"></i>إعدادات</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="app-container">
+    <div class="container app-main-container">
+      <div class="app-title-wrapper">
+          <h2 class="app-title"><i class="fas fa-plus-circle"></i>إضافة إنذار أو عقوبة</h2>
+      </div>
+      <div class="mb-3">
+        <label for="name" class="form-label">اسم الموظف:</label>
+        <input type="text" class="form-control" id="name" list="employeeList" required>
+      </div>
+      <div class="mb-3">
+        <label for="type" class="form-label">نوع المخالفة:</label>
+        <select class="form-select" id="type">
+          </select>
+      </div>
+      <div class="mb-3">
+        <label for="reasonMode" class="form-label">اختيار نمط السبب:</label>
+        <select class="form-select" id="reasonMode">
+          </select>
+      </div>
+      <div class="mb-3" id="aiReasonBox">
+        <label for="aiReason" class="form-label">سبب الإنذار (ذكاء اصطناعي/مخصص):</label>
+        <input type="text" class="form-control" id="aiReason" readonly>
+      </div>
+      <div class="mb-3" id="manualReasonBox" style="display: none;">
+        <label for="manualReason" class="form-label">سبب الإنذار (اختياري):</label>
+        <textarea class="form-control" id="manualReason" rows="3"></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="typeNumber" class="form-label">رقم المخالفة (اختياري):</label>
+        <input type="number" class="form-control" id="typeNumber">
+      </div>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-3">
+        <button id="add-btn" class="btn btn-primary btn-lg"><i class="fas fa-plus"></i> إضافة</button>
+      </div>
+      <div class="d-grid gap-2 mt-4">
+        <button id="showAlertsBtn" class="btn btn-outline-primary btn-lg"><i class="fas fa-list-alt"></i> عرض قائمة الإنذارات والعقوبات</button>
+        <button id="smartAnalysisBtn" class="btn btn-info btn-lg"><i class="fas fa-users-cog"></i> لوحة مراقبة الموظفين</button>
+        <button id="backToMenuBtn" class="btn btn-secondary btn-lg"><i class="fas fa-arrow-left"></i> عودة إلى القائمة الرئيسية</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="successModalLabel"><i class="fas fa-check-circle text-light"></i> تمت العملية بنجاح</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        </div>
+        <div class="modal-body text-center">
+          <p class="fs-5">تم إضافة التنبيه بنجاح!</p>
+          <i class="fas fa-thumbs-up fa-3x text-success mb-3"></i> <br>
+          <button id="printSuccessBtn" class="btn btn-success"><i class="fas fa-print"></i> طباعة التنبيه</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="alertsModal" tabindex="-1" aria-labelledby="alertsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="alertsModalLabel"><i class="fas fa-clipboard-list"></i> قائمة الإنذارات والعقوبات</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <input type="text" id="modalSearchInput" class="form-control" placeholder="ابحث بالاسم أو السبب...">
+          </div>
+          <ul id="alertsModalList" class="list-unstyled"></ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="aboutModalLabel"><i class="fas fa-info-circle"></i> نبذة عن النظام</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        </div>
+        <div class="modal-body">
+          <div class="text-center mb-3">
+             <img src="images/logo.png" alt="EmperMI Mini Logo" style="max-width:120px; margin-bottom:10px;">
+             <h4 class="mb-0">EmperMI 2.0</h4>
+          </div>
+          <p>
+            هذا النظام مصمم لإدارة الإنذارات والعقوبات داخل المؤسسة بطريقة سهلة وفعالة. يمكنك إضافة الإنذارات والعقوبات، تعديلها، حذفها، والبحث فيها. كما يتيح النظام طباعة التنبيهات مع نصوص مخصصة تضمن توضيح تفاصيل المخالفة أو المكافأة.
+          </p>
+          <hr>
+          <p class="text-center mb-1"><i class="fas fa-user-cog"></i> <strong>مطور:</strong> بلال بورابعة</p>
+          <p class="text-center mb-1"><i class="fas fa-code-branch"></i> <strong>اصدار:</strong> 2.0.0</p>
+          <p class="text-center mt-3 fst-italic" style="font-size:0.9em;">
+            هذا نظام مُهداة إلى أخت مريم، وأهديها تعبيراً صغيراً كامتنان من إمبراطور التقنية بلال بورابعة.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="settingsModalLabel"><i class="fas fa-cogs"></i> إعدادات النظام</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="nav nav-tabs mb-3" id="settingsTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup-pane" type="button" role="tab" aria-controls="backup-pane" aria-selected="true"><i class="fas fa-database"></i> نسخ احتياطي</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="patterns-tab" data-bs-toggle="tab" data-bs-target="#patterns-pane" type="button" role="tab" aria-controls="patterns-pane" aria-selected="false"><i class="fas fa-ruler-combined"></i> ضبط أنماط</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="violation-tab" data-bs-toggle="tab" data-bs-target="#violation-pane" type="button" role="tab" aria-controls="violation-pane" aria-selected="false"><i class="fas fa-exclamation-triangle"></i> أنواع المخالفات</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="employees-tab" data-bs-toggle="tab" data-bs-target="#employees-pane" type="button" role="tab" aria-controls="employees-pane" aria-selected="false"><i class="fas fa-users-cog"></i> إدارة الموظفين</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="print-settings-tab" data-bs-toggle="tab" data-bs-target="#print-settings-pane" type="button" role="tab" aria-controls="print-settings-pane" aria-selected="false"><i class="fas fa-print"></i> إعدادات الطباعة</button>
+            </li>
+          </ul>
+          <div class="tab-content" id="settingsTabContent">
+            <div class="tab-pane fade show active" id="backup-pane" role="tabpanel" aria-labelledby="backup-tab">
+              <h4 class="mb-3 text-primary">النسخ الاحتياطي والاسترجاع</h4>
+              <p>قم بتأمين بيانات نظامك عن طريق تنزيل نسخة احتياطية. يمكنك استرجاعها لاحقاً عند الحاجة.</p>
+              <div class="d-grid gap-2">
+                <button id="backupBtn" class="btn btn-success"><i class="fas fa-download"></i> تنزيل نسخة احتياطية للبيانات</button>
+                <button id="restoreBtn" class="btn btn-info text-dark"><i class="fas fa-upload"></i> استرجاع البيانات من ملف</button>
+              </div>
+              <input type="file" id="restoreFileInput" style="display:none" accept=".json">
+
+              <hr class="my-4">
+
+              <h4 class="mb-3 text-danger">إعادة تهيئة النظام</h4>
+              <p class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i><strong>تحذير:</strong> سيؤدي هذا الإجراء إلى حذف جميع البيانات المسجلة في النظام بشكل نهائي (الإنذارات، الأنماط، أنواع المخالفات، أسماء الموظفين). لا يمكن التراجع عن هذا الإجراء.</p>
+              <div class="d-grid">
+                <button id="resetSystemBtn" class="btn btn-danger"><i class="fas fa-power-off"></i> إعادة تهيئة النظام بالكامل</button>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="patterns-pane" role="tabpanel" aria-labelledby="patterns-tab">
+              <h4 class="mb-3 text-primary">إدارة أنماط أسباب الإنذار</h4>
+              <p class="mb-3 alert alert-info small">
+                  <i class="fas fa-info-circle"></i> ملاحظة: عند إضافة نمط جديد يمكنك إدراج كلمة <strong>{name}</strong> أو <strong>name</strong> داخل نص النمط، وسيتم استبدالها تلقائيًا باسم الموظف.
+              </p>
+              <div class="mb-3">
+                <label for="patternName" class="form-label">اسم النمط الجديد:</label>
+                <input type="text" class="form-control" id="patternName" placeholder="مثال: تأخير متكرر">
+              </div>
+              <div class="mb-3">
+                <label for="patternText" class="form-label">نص النمط:</label>
+                <textarea class="form-control" id="patternText" rows="3" placeholder="مثال: تم توجيه إنذار للموظف {name} بسبب تأخره المتكرر عن العمل."></textarea>
+              </div>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                 <button id="addPatternBtn" class="btn btn-primary"><i class="fas fa-plus-circle"></i> إضافة النمط</button>
+                 <button id="editAIRuleBtn" class="btn btn-warning"><i class="fas fa-brain"></i> تعديل نمط الذكاء الاصطناعي</button>
+              </div>
+              <hr class="my-4">
+              <h5 class="mb-3">الأنماط المخصصة الحالية:</h5>
+              <div id="customPatternsList"></div>
+            </div>
+            <div class="tab-pane fade" id="violation-pane" role="tabpanel" aria-labelledby="violation-tab">
+              <h4 class="mb-3 text-primary">إدارة أنواع المخالفات</h4>
+              <div class="mb-3">
+                <label for="newViolationType" class="form-label">نوع المخالفة الجديد:</label>
+                <input type="text" id="newViolationType" class="form-control" placeholder="مثال: إنذار شفهي، خصم من الراتب...">
+              </div>
+              <button id="addViolationTypeBtn" class="btn btn-primary w-100 mb-3"><i class="fas fa-plus-circle"></i> إضافة نوع مخالفة</button>
+              <h5 class="mb-3">أنواع المخالفات الحالية:</h5>
+              <div id="violationTypesList"></div>
+            </div>
+            <div class="tab-pane fade" id="employees-pane" role="tabpanel" aria-labelledby="employees-tab">
+              <h4 class="mb-3 text-primary">إدارة قائمة الموظفين المقترحة</h4>
+               <p class="alert alert-secondary small"><i class="fas fa-info-circle"></i> هذه القائمة تستخدم للاقتراحات عند إدخال اسم الموظف، وتظهر في لوحة مراقبة الموظفين.</p>
+              <div class="mb-3">
+                <label for="newEmployeeName" class="form-label">اسم الموظف الجديد:</label>
+                <input type="text" id="newEmployeeName" class="form-control" placeholder="أدخل اسم الموظف كاملاً">
+              </div>
+              <button id="addEmployeeBtn" class="btn btn-primary w-100 mb-3"><i class="fas fa-user-plus"></i> إضافة موظف للقائمة</button>
+              <h5 class="mb-3">الموظفون المضافون:</h5>
+              <div id="employeeListDiv"></div>
+            </div>
+            <div class="tab-pane fade" id="print-settings-pane" role="tabpanel" aria-labelledby="print-settings-tab">
+              <h4 class="mb-3 text-primary"><i class="fas fa-file-alt"></i> تعديل محتوى ورقة الطباعة</h4>
+
+              <div class="mb-3">
+                <label for="printCompanyNote" class="form-label">نص "ملاحظة توضيحية":</label>
+                <textarea class="form-control" id="printCompanyNote" rows="4" placeholder="أدخل النص الذي يظهر كملاحظة توضيحية في ورقة الطباعة..."></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="printDisclaimerNote" class="form-label">نص "تنويه" (يظهر مع منطقة QR):</label>
+                <textarea class="form-control" id="printDisclaimerNote" rows="3" placeholder="أدخل النص الذي يظهر كتنويه في ورقة الطباعة، مثل 'تمت إمضاء الوثيقة تلقائياً...'"></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="printQrExtraText" class="form-label">نص إضافي داخل رمز QR (اختياري):</label>
+                <input type="text" class="form-control" id="printQrExtraText" placeholder="سيتم إضافته لبيانات QR عند الفحص">
+                <small class="form-text text-muted">هذا النص سيظهر عند فحص رمز QR، بالإضافة لمعلومات الإنذار الأساسية.</small>
+              </div>
+
+
+              <hr class="my-3">
+              <h5 class="mb-3"><i class="fas fa-palette"></i> تخصيص لون ثابت لعناوين الطباعة</h5>
+              <p><small>ملاحظة: إذا تم اختيار لون ثابت، سيتم استخدامه لجميع العناوين. اختر "تلقائي" للتلوين بناءً على نوع المخالفة.</small></p>
+
+              <div class="mb-3">
+                <label for="printTitleColorGlobal" class="form-label">لون عنوان الطباعة الموحد:</label>
+                <select class="form-select" id="printTitleColorGlobal">
+                  <option value="auto">تلقائي (حسب نوع المخالفة)</option>
+                  <option value="red">أحمر ثابت</option>
+                  <option value="orange">برتقالي ثابت</option>
+                  <option value="green">أخضر ثابت</option>
+                  <option value="blue">أزرق ثابت (لون النظام)</option>
+                  <option value="black">أسود ثابت</option>
+                </select>
+              </div>
+
+              <button id="savePrintSettingsBtn" class="btn btn-primary w-100"><i class="fas fa-save"></i> حفظ إعدادات الطباعة</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editAIRuleModal" tabindex="-1" aria-labelledby="editAIRuleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editAIRuleModalLabel"><i class="fas fa-robot"></i> تعديل نمط الذكاء الاصطناعي</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        </div>
+        <div class="modal-body">
+          <p class="alert alert-info"><i class="fas fa-lightbulb"></i> يمكنك تعديل نص نمط الذكاء الاصطناعي. استخدم العلامات التالية ليتم استبدالها تلقائياً:</p>
+          <ul>
+            <li><strong>{name}</strong>: سيتم استبدالها باسم الموظف.</li>
+            <li><strong>{violationType}</strong>: سيتم استبدالها بنوع المخالفة المحدد.</li>
+          </ul>
+          <div class="mb-3">
+            <label for="editAIRuleText" class="form-label">نص نمط الذكاء الاصطناعي:</label>
+            <textarea class="form-control" id="editAIRuleText" rows="5"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-ban"></i> إلغاء</button>
+          <button type="button" class="btn btn-primary" id="saveAIRuleChanges"><i class="fas fa-save"></i> حفظ التعديلات</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="smartAnalysisModal" tabindex="-1" aria-labelledby="smartAnalysisModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-dark">
+          <h5 class="modal-title" id="smartAnalysisModalLabel"><i class="fas fa-users-cog"></i> لوحة مراقبة الموظفين (التحليل الذكي)</h5>
+          <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        </div>
+        <div class="modal-body">
+          <p class="lead">تعرض هذه اللوحة جميع الموظفين المسجلين في قائمة الاقتراحات مع عدد مخالفاتهم السلبية. يتم تمييز الموظفين الذين لديهم 3 مخالفات سلبية أو أكثر.</p>
+          <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" id="analysisSearchInput" class="form-control" placeholder="ابحث عن موظف...">
+            </div>
+          </div>
+          <hr>
+          <div id="employeeMonitoringList">
+            <p class="text-center text-muted p-4">جاري تحميل قائمة الموظفين...</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="employeeAnalysisDetailModal" tabindex="-1" aria-labelledby="employeeAnalysisDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="employeeAnalysisDetailModalLabel"><i class="fas fa-exclamation-triangle"></i> تفاصيل تحليل الموظف</h5>
+                <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+            </div>
+            <div class="modal-body" id="employeeAnalysisDetailContent"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+
+  <datalist id="employeeList"></datalist>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ... (JavaScript code remains largely the same, only the printAlert's CSS part is modified)
+    let customPatterns = [];
+    let editingPatternId = null;
+    function loadCustomPatterns() {
+      let data = localStorage.getItem("customPatterns");
+      customPatterns = data ? JSON.parse(data) : [];
+    }
+    function saveCustomPatterns() {
+      localStorage.setItem("customPatterns", JSON.stringify(customPatterns));
+    }
+    function updateReasonModeDropdown() {
+      let dropdown = document.getElementById("reasonMode");
+      dropdown.innerHTML = "";
+      let optionManual = document.createElement("option");
+      optionManual.value = "manual";
+      optionManual.text = "✍️ نمط يدوي (إدخال حر)";
+      optionManual.selected = true;
+      dropdown.appendChild(optionManual);
+      let optionAI = document.createElement("option");
+      optionAI.value = "ai";
+      optionAI.text = "🧠 نمط الذكاء الاصطناعي (تلقائي)";
+      dropdown.appendChild(optionAI);
+      customPatterns.forEach(pattern => {
+        let opt = document.createElement("option");
+        opt.value = "custom_" + pattern.id;
+        opt.text = `📄 ${pattern.name}`;
+        dropdown.appendChild(opt);
+      });
+    }
+    function updateCustomPatternsList() {
+      let listDiv = document.getElementById("customPatternsList");
+      listDiv.innerHTML = "";
+      if(customPatterns.length === 0) {
+        listDiv.innerHTML = "<p class='text-muted text-center p-3'><i class='fas fa-folder-open fa-2x mb-2'></i><br>لا توجد أنماط مخصصة حالياً.</p>";
+      } else {
+        customPatterns.forEach(pattern => {
+          let div = document.createElement("div");
+          div.className = "d-flex justify-content-between align-items-center mb-2 p-3 border rounded bg-light";
+          div.innerHTML = `
+            <div>
+                <strong class="text-primary">${pattern.name}</strong><br>
+                <small class="text-muted">${pattern.text.substring(0,70)}${pattern.text.length > 70 ? '...' : ''}</small>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-warning me-1" onclick="editCustomPattern('${pattern.id}')" title="تعديل النمط"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteCustomPattern('${pattern.id}')" title="حذف النمط"><i class="fas fa-trash-alt"></i></button>
+            </div>
+          `;
+          listDiv.appendChild(div);
+        });
+      }
+    }
+    function deleteCustomPattern(id) {
+      if (!confirm("هل أنت متأكد من حذف هذا النمط؟")) return;
+      customPatterns = customPatterns.filter(p => p.id !== id);
+      saveCustomPatterns();
+      updateCustomPatternsList();
+      updateReasonModeDropdown();
+    }
+    function editCustomPattern(id) {
+      let pattern = customPatterns.find(p => p.id === id);
+      if(pattern) {
+        document.getElementById("patternName").value = pattern.name;
+        document.getElementById("patternText").value = pattern.text;
+        editingPatternId = id;
+        document.getElementById("addPatternBtn").innerHTML = '<i class="fas fa-save"></i> تعديل النمط الحالي';
+        document.getElementById("patternName").focus();
+      }
+    }
+
+    document.getElementById("reasonMode").addEventListener("change", function() {
+      let selectedMode = this.value;
+      let aiBox = document.getElementById("aiReasonBox");
+      let manualBox = document.getElementById("manualReasonBox");
+      aiBox.style.display = "none";
+      manualBox.style.display = "none";
+
+      if (selectedMode === "ai") {
+        aiBox.style.display = "block";
+        document.getElementById("aiReason").value = generateAIReason();
+      } else if (selectedMode === "manual") {
+        manualBox.style.display = "block";
+        document.getElementById("manualReason").value = "";
+      } else if (selectedMode.startsWith("custom_")) {
+        let patternId = selectedMode.split("_")[1];
+        let pattern = getCustomPatternById(patternId);
+        if (pattern) {
+          aiBox.style.display = "block";
+          document.getElementById("aiReason").value = insertEmployeeName(pattern.text);
+        }
+      }
+      if (aiBox.style.display === "block" && document.getElementById("aiReason")) document.getElementById("aiReason").focus();
+      if (manualBox.style.display === "block" && document.getElementById("manualReason")) document.getElementById("manualReason").focus();
+
+    });
+    function getCustomPatternById(id) {
+      return customPatterns.find(p => p.id === id);
+    }
+    function insertEmployeeName(patternText) {
+      let name = document.getElementById("name").value.trim();
+      let replacedText = patternText.replace(/{name}/g, name || "الموظف");
+      replacedText = replacedText.replace(/\bname\b/g, name || "الموظف");
+      return replacedText;
+    }
+    let defaultAIRule = localStorage.getItem("defaultAIRule") || "تم توجيه {violationType} للموظف {name} نتيجة العمل الغير جدي، ولذلك تم تطبيق عقوبة. نرجو منكم الإلتزام بالقوانين الخاصة بشركتنا لتجنب تكرار هذه المخالفات.";
+    function saveAIRule() { localStorage.setItem("defaultAIRule", defaultAIRule); }
+
+    document.getElementById("editAIRuleBtn").addEventListener("click", function() {
+      document.getElementById("editAIRuleText").value = defaultAIRule;
+      let modalElement = document.getElementById("editAIRuleModal");
+      let modal = bootstrap.Modal.getInstance(modalElement);
+      if(!modal) { modal = new bootstrap.Modal(modalElement); }
+      modal.show();
+    });
+    document.getElementById("saveAIRuleChanges").addEventListener("click", function() {
+      let newRule = document.getElementById("editAIRuleText").value.trim();
+      if(newRule === "") { alert("يرجى إدخال نص نمط الذكاء الاصطناعي"); return; }
+      defaultAIRule = newRule;
+      saveAIRule();
+      if(document.getElementById("reasonMode").value === "ai"){
+        document.getElementById("aiReason").value = generateAIReason();
+      }
+      let modalElement = document.getElementById("editAIRuleModal");
+      let modal = bootstrap.Modal.getInstance(modalElement);
+      if(modal) { modal.hide(); }
+      alert("تم حفظ نمط الذكاء الاصطناعي بنجاح.");
+    });
+    function generateAIReason() {
+      let name = document.getElementById("name").value.trim() || "الموظف";
+      let typeSelect = document.getElementById("type");
+      let violationTypeName = typeSelect && typeSelect.options[typeSelect.selectedIndex] ? typeSelect.options[typeSelect.selectedIndex].text : "إنذار";
+      let ruleText = defaultAIRule.replace(/{violationType}/g, violationTypeName).replace(/{name}/g, name);
+      return ruleText;
+    }
+    document.getElementById("name").addEventListener("input", function() {
+      let selectedMode = document.getElementById("reasonMode").value;
+      if (selectedMode === "ai") {
+         document.getElementById("aiReason").value = generateAIReason();
+      } else if (selectedMode.startsWith("custom_")) {
+        let patternId = selectedMode.split("_")[1];
+        let pattern = getCustomPatternById(patternId);
+        if (pattern) {
+          document.getElementById("aiReason").value = insertEmployeeName(pattern.text);
+        }
+      }
+    });
+    document.getElementById("type")?.addEventListener("change", function() {
+        let selectedMode = document.getElementById("reasonMode").value;
+        if (selectedMode === "ai") {
+            document.getElementById("aiReason").value = generateAIReason();
+        }
+    });
+
+    const addBtn = document.getElementById("add-btn");
+    const nameInput = document.getElementById("name");
+    const typeNumberInput = document.getElementById("typeNumber");
+    const ALERTS_STORAGE_KEY = 'alertsData_EmperMI_v2';
+    let alerts = [];
+    let editingIndex = -1;
+
+    function saveAlertsToLocalStorage() {
+      localStorage.setItem(ALERTS_STORAGE_KEY, JSON.stringify(alerts));
+    }
+    function loadAlertsFromLocalStorage() {
+      const storedAlerts = localStorage.getItem(ALERTS_STORAGE_KEY);
+      if (storedAlerts) { alerts = JSON.parse(storedAlerts); }
+      else { alerts = []; }
+    }
+
+    function addAlert() {
+      const name = nameInput.value.trim();
+      let selectedMode = document.getElementById("reasonMode").value;
+      let finalReason = "";
+
+      if (selectedMode === "ai" || selectedMode.startsWith("custom_")) {
+        finalReason = document.getElementById("aiReason").value.trim();
+      } else if (selectedMode === "manual") {
+        finalReason = document.getElementById("manualReason").value.trim();
+      }
+
+      if(name === "") {
+        alert("الرجاء ملء حقل اسم الموظف.");
+        nameInput.focus();
+        return;
+      }
+      if(finalReason === "" && selectedMode === "manual") {
+         alert("الرجاء إدخال سبب الإنذار في النمط اليدوي.");
+         document.getElementById("manualReason").focus();
+         return;
+      }
+       if(finalReason === "" && (selectedMode === "ai" || selectedMode.startsWith("custom_"))) {
+         alert("لم يتمكن النظام من توليد سبب. يرجى التحقق من الإعدادات أو اختيار نمط يدوي.");
+         return;
+      }
+
+      const typeSelect = document.getElementById("type");
+      const type = typeSelect.value;
+      const typeNumber = typeNumberInput.value.trim();
+      const today = new Date();
+      const date = today.toLocaleDateString('fr-CA');
+      const [year, month, day] = date.split('-');
+      const formattedDate = [day, month, year].join('/');
+
+      const alertObj = { name: name, reason: finalReason, type: type, date: formattedDate, typeNumber: typeNumber, id: Date.now().toString() };
+
+      if(editingIndex !== -1 && alerts[editingIndex]) {
+        alertObj.id = alerts[editingIndex].id;
+        alerts[editingIndex] = alertObj;
+        editingIndex = -1;
+        addBtn.innerHTML = '<i class="fas fa-plus"></i> إضافة';
+      } else {
+        alerts.unshift(alertObj);
+      }
+      saveAlertsToLocalStorage();
+      updateAlertsModalList();
+
+      let successModalEl = document.getElementById("successModal");
+      let successModal = bootstrap.Modal.getInstance(successModalEl);
+      if (!successModal) {
+        successModal = new bootstrap.Modal(successModalEl);
+      }
+      successModal.show();
+
+      if (typeof employeeNames !== 'undefined' && !employeeNames.some(empName => empName.toLowerCase() === name.toLowerCase()) && editingIndex === -1) {
+        if (confirm(`الموظف "${name}" غير موجود في قائمة الاقتراحات. هل ترغب في إضافته الآن؟`)) {
+            if (!employeeNames.some(empName => empName.toLowerCase() === name.toLowerCase())) { 
+                employeeNames.push(name);
+                employeeNames.sort((a, b) => a.localeCompare(b, 'ar'));
+                saveEmployeeNames();
+                updateEmployeeDatalist();
+                updateEmployeeList();
+                alert(`تم إضافة الموظف "${name}" إلى قائمة الاقتراحات.`);
+            }
+        }
+      }
+
+      nameInput.value = "";
+      document.getElementById("aiReason").value = "";
+      document.getElementById("manualReason").value = "";
+      typeNumberInput.value = "";
+      document.getElementById("reasonMode").value = "manual";
+      document.getElementById("reasonMode").dispatchEvent(new Event('change'));
+      if (typeSelect.options.length > 0) typeSelect.selectedIndex = 0;
+      nameInput.focus();
+    }
+
+
+    function deleteAlert(alertId) {
+      if (!confirm("هل أنت متأكد من رغبتك في حذف هذا التنبيه؟ لا يمكن التراجع عن هذا الإجراء.")) return;
+      alerts = alerts.filter(alert => alert.id !== alertId);
+      updateAlertsModalList();
+      saveAlertsToLocalStorage();
+    }
+
+    function editAlert(alertId) {
+        const alertIndexToEdit = alerts.findIndex(alert => alert.id === alertId);
+        if (alertIndexToEdit === -1) return;
+
+        editingIndex = alertIndexToEdit;
+        const alertObj = alerts[alertIndexToEdit];
+
+        nameInput.value = alertObj.name;
+        document.getElementById("type").value = alertObj.type;
+        typeNumberInput.value = alertObj.typeNumber || "";
+
+        let violationDisplayNameForAIRule = (violationTypes.find(v => v.id === alertObj.type) || {}).name || alertObj.type;
+        let expectedAIRule = defaultAIRule.replace(/{violationType}/g, violationDisplayNameForAIRule).replace(/{name}/g, alertObj.name);
+
+        let reasonMatched = false;
+        if (expectedAIRule === alertObj.reason) {
+            document.getElementById("reasonMode").value = "ai";
+            reasonMatched = true;
+        } else {
+            for (const pattern of customPatterns) {
+                let currentNameForPattern = nameInput.value.trim();
+                let patternTextWithCurrentName = pattern.text.replace(/{name}/g, currentNameForPattern || "الموظف")
+                                                             .replace(/\bname\b/g, currentNameForPattern || "الموظف");
+                if (patternTextWithCurrentName === alertObj.reason) {
+                    document.getElementById("reasonMode").value = "custom_" + pattern.id;
+                    reasonMatched = true;
+                    break;
+                }
+            }
+        }
+
+        document.getElementById("reasonMode").dispatchEvent(new Event('change'));
+
+        if (reasonMatched) {
+            document.getElementById("aiReason").value = alertObj.reason;
+        } else {
+            document.getElementById("reasonMode").value = "manual";
+            document.getElementById("reasonMode").dispatchEvent(new Event('change'));
+            document.getElementById("manualReason").value = alertObj.reason;
+        }
+
+        addBtn.innerHTML = '<i class="fas fa-save"></i> حفظ التعديل';
+        nameInput.focus();
+    }
+
+    const PRINT_SETTINGS_KEY = 'printSettings_EmperMI_v1';
+    let printSettings = {
+        companyNote: `📌 <strong>ملاحظة توضيحية:</strong><br>
+    نحن شركة كيب شوز نعلمكم أن الغرامات التي نقتطعها من العمال تُعتبر وسيلة لتحفيزهم على الانضباط والعمل بجدية أكبر. عليه، فإن العامل الذي لا تُسجل عليه أي غرامات ويُظهر التزامًا ملحوظًا، يستفيد من زيادة مالية قدرها 500 دج مكافأة له على سلوكه المهني الجيد.`,
+        disclaimerNote: `📎 <strong>تنويه:</strong><br>
+    في حال عدم التوقيع على هذه الوثيقة خلال المهلة المحددة، سيتم تفعيل الوضع الثاني تلقائيًا، وتُعتبر الوثيقة ممضية بصفة آلية بعد مرور أربع (4) ساعات من تاريخ تسليمها.`,
+        printTitleColorGlobal: 'auto',
+        qrExtraText: '' 
+    };
+
+    function loadPrintSettings() {
+        const storedSettings = localStorage.getItem(PRINT_SETTINGS_KEY);
+        if (storedSettings) {
+            try {
+                const parsedSettings = JSON.parse(storedSettings);
+                printSettings = {
+                    companyNote: (parsedSettings.companyNote !== undefined) ? parsedSettings.companyNote : printSettings.companyNote,
+                    disclaimerNote: (parsedSettings.disclaimerNote !== undefined) ? parsedSettings.disclaimerNote : printSettings.disclaimerNote,
+                    printTitleColorGlobal: parsedSettings.printTitleColorGlobal || 'auto',
+                    qrExtraText: parsedSettings.qrExtraText || '' 
+                };
+            } catch (e) {
+                console.error("Error parsing print settings, using defaults.", e);
+            }
+        }
+        const companyNoteEl = document.getElementById("printCompanyNote");
+        const disclaimerNoteEl = document.getElementById("printDisclaimerNote");
+        const globalColorEl = document.getElementById("printTitleColorGlobal");
+        const qrExtraTextEl = document.getElementById("printQrExtraText"); 
+
+
+        if (companyNoteEl) companyNoteEl.value = printSettings.companyNote;
+        if (disclaimerNoteEl) disclaimerNoteEl.value = printSettings.disclaimerNote;
+        if (globalColorEl) globalColorEl.value = printSettings.printTitleColorGlobal;
+        if (qrExtraTextEl) qrExtraTextEl.value = printSettings.qrExtraText; 
+    }
+
+    function savePrintSettings() {
+        localStorage.setItem(PRINT_SETTINGS_KEY, JSON.stringify(printSettings));
+    }
+
+    function updateAndSavePrintSettings() {
+        const companyNoteEl = document.getElementById("printCompanyNote");
+        const disclaimerNoteEl = document.getElementById("printDisclaimerNote");
+        const globalColorEl = document.getElementById("printTitleColorGlobal");
+        const qrExtraTextEl = document.getElementById("printQrExtraText"); 
+
+        if (companyNoteEl) printSettings.companyNote = companyNoteEl.value.trim();
+        if (disclaimerNoteEl) printSettings.disclaimerNote = disclaimerNoteEl.value.trim();
+        if (globalColorEl) printSettings.printTitleColorGlobal = globalColorEl.value;
+        if (qrExtraTextEl) printSettings.qrExtraText = qrExtraTextEl.value.trim(); 
+
+        savePrintSettings();
+        alert("تم حفظ إعدادات الطباعة بنجاح!");
+    }
+
+    function printAlert(alertObj) {
+      const printWindow = window.open('', '_blank', 'width=800,height=750,scrollbars=yes,resizable=yes');
+      let vt = violationTypes.find(v => v.id === alertObj.type);
+      let violationName = vt ? vt.name : alertObj.type;
+
+      let titleColorClass = '';
+      const globalColorSetting = printSettings.printTitleColorGlobal;
+
+      if (globalColorSetting === 'auto' || !globalColorSetting) {
+          if (vt) {
+              const vtNameLower = vt.name.toLowerCase();
+              if (vtNameLower.includes("مكافأة") || vtNameLower.includes("شكر")) {
+                  titleColorClass = `print-title-green`;
+              } else if (vtNameLower.includes("إنذار") || vtNameLower.includes("تنبيه") || vtNameLower.includes("توبيخ") || vtNameLower.includes("لفت نظر")) {
+                  titleColorClass = `print-title-orange`;
+              } else { 
+                  titleColorClass = `print-title-red`;
+              }
+          } else {
+             titleColorClass = `print-title-red`;
+          }
+      } else {
+          titleColorClass = `print-title-${globalColorSetting}`;
+      }
+
+      let qrDataString =
+        `النوع: ${violationName} ${alertObj.typeNumber ? '(رقم: ' + alertObj.typeNumber + ')' : ''}\n` +
+        `الموظف: ${alertObj.name}\n` +
+        `السبب: ${alertObj.reason}\n` +
+        `التاريخ: ${alertObj.date}`;
+      
+      if (printSettings.qrExtraText && printSettings.qrExtraText.trim() !== "") {
+        qrDataString += `\n\nنص إضافي:\n${printSettings.qrExtraText.trim()}`;
+      }
+
+      const encodedQrData = encodeURIComponent(qrDataString);
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodedQrData}&ecc=M&margin=2`;
+
+      const combinedFooterNote = `${printSettings.companyNote}<br><br>${printSettings.disclaimerNote}`;
+
+      const generatePrintContent = (uniqueIdSuffix) => {
+        return `
+          <div class="print-area">
+            <h2 class="print-title">
+              <span class="${titleColorClass}">
+                ${violationName} ${alertObj.typeNumber ? '(' + alertObj.typeNumber + ')' : ''}
+              </span>
+            </h2>
+            <p class="print-alert-message">
+              ${alertObj.reason}
+            </p>
+            <div class="print-footer-content">
+                <div class="footer-top-line">
+                    <p class="print-date-custom">التاريخ: ${alertObj.date}</p>
+                    <p class="print-signature-custom">إمضاء</p>
+                </div>
+                <div class="qr-and-note-area">
+                    <div class="company-note-print">
+                        ${combinedFooterNote}
+                    </div>
+                    <div class="qr-code-container-print">
+                      <img id="qrImage-${uniqueIdSuffix}" src="${qrApiUrl}" alt="QR Code" class="qrcode-img-custom" />
+                    </div>
+                </div>
+            </div>
+          </div>
+        `;
+      };
+
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>طباعة الإنذار/العقوبة - نسختان</title>
+            <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+            <style>
+              @media print {
+                @page {
+                  size: A4;
+                  margin: 10mm;
+                }
+                body {
+                  font-family: 'Tajawal', sans-serif;
+                  direction: rtl;
+                  margin: 0;
+                  padding: 0;
+                  background-color: #fff !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                .print-area {
+                  padding: 7mm;
+                  border: 1.5px solid #000;
+                  margin: 0 auto 7mm auto;
+                  min-height: 128mm;
+                  max-height: 133mm;
+                  overflow: hidden;
+                  width: 100%;
+                  box-sizing: border-box;
+                  background-color: #fff !important;
+                  display: flex;
+                  flex-direction: column;
+                }
+                .print-area:last-of-type {
+                    margin-bottom: 0;
+                }
+
+                .print-title { text-align: center; font-size: 1.3em; margin-bottom: 4mm; font-weight: bold; }
+                
+                /* MODIFIED: Print alert message styling for better text flow */
+                .print-alert-message {
+                    text-align: right; 
+                    font-size: 1.0em;  
+                    line-height: 1.5;  
+                    margin-bottom: 4mm; 
+                    min-height: 25mm;
+                    flex-grow: 1;
+                    padding: 0 5mm; 
+                    word-break: normal; 
+                    overflow-wrap: break-word; 
+                    hyphens: auto; 
+                    -webkit-hyphens: auto;
+                    -ms-hyphens: auto;
+                }
+                /* END MODIFIED */
+
+                .print-footer-content {
+                    margin-top: auto;
+                }
+                .footer-top-line {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    margin-bottom: 20mm;
+                }
+                .print-date-custom {
+                    font-size: 0.95em;
+                    line-height: 1.3;
+                    margin: 0;
+                }
+                .print-signature-custom {
+                    font-size: 1.05em;
+                    line-height: 1.4;
+                    margin: 0;
+                }
+                .qr-and-note-area {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    margin-top: 2mm;
+                    width: 100%;
+                }
+                .company-note-print {
+                    flex-basis: 70%;
+                    font-size: 0.8em;
+                    line-height: 1.4;
+                    text-align: justify;
+                    padding-left: 4mm; 
+                }
+                html[dir="rtl"] .company-note-print {
+                    padding-left: 0;
+                    padding-right: 4mm;
+                }
+                .company-note-print strong { font-weight: bold; }
+
+                .qr-code-container-print {
+                    flex-shrink: 0;
+                    text-align: right; 
+                }
+                 html[dir="rtl"] .qr-code-container-print {
+                    text-align: left;
+                }
+                .qrcode-img-custom {
+                    width: 120px;
+                    height: 120px;
+                    display: block;
+                    border: none;
+                }
+
+                .print-title-red { color: red !important; }
+                .print-title-orange { color: orange !important; }
+                .print-title-green { color: green !important; }
+                .print-title-blue { color: var(--primary-color) !important; }
+                .print-title-black { color: black !important; }
+
+
+                hr.print-separator {
+                    border: none;
+                    border-top: 1px dashed #888;
+                    margin: 5mm auto;
+                    width: 95%;
+                    page-break-before: auto !important;
+                    page-break-after: auto !important;
+                }
+              }
+              body:not(:global(*)) {
+                font-family: 'Tajawal', sans-serif;
+                direction: rtl;
+                margin: 10px;
+              }
+              body:not(:global(*)) .print-area {
+                 border: 2px solid #ccc; margin-bottom: 20px; padding: 20px;
+              }
+              body:not(:global(*)) hr.print-separator {
+                 margin: 20px 0; border-top: 1px dashed #aaa;
+              }
+            </style>
+          </head>
+          <body>
+            ${generatePrintContent('1')}
+            <hr class="print-separator">
+            ${generatePrintContent('2')}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+
+      printWindow.onload = function() {
+          let images = printWindow.document.querySelectorAll('.qrcode-img-custom');
+          let imagesLoaded = 0;
+          const totalImages = images.length;
+          let printHasBeenTriggered = false;
+
+          const attemptPrint = () => {
+              if (printHasBeenTriggered) return;
+              printHasBeenTriggered = true;
+              printWindow.focus();
+              printWindow.print();
+          };
+
+          if (totalImages === 0) {
+              setTimeout(attemptPrint, 500);
+              return;
+          }
+
+          images.forEach(img => {
+              if (img.complete && img.naturalHeight !== 0) {
+                  imagesLoaded++;
+              } else {
+                  img.onload = () => {
+                      imagesLoaded++;
+                      if (imagesLoaded === totalImages) {
+                          attemptPrint();
+                      }
+                  };
+                  img.onerror = () => {
+                      imagesLoaded++;
+                      const placeholder = printWindow.document.createElement('div');
+                      placeholder.textContent = 'خطأ تحميل QR';
+                      placeholder.style.cssText = 'width:120px; height:120px; border:1px solid red; text-align:center; padding-top:50px; display:block; box-sizing:border-box; font-size:10px;';
+                      if (img.parentNode) {
+                        img.parentNode.replaceChild(placeholder, img);
+                      }
+                      if (imagesLoaded === totalImages) {
+                          attemptPrint();
+                      }
+                  };
+              }
+          });
+
+          if (imagesLoaded === totalImages && totalImages > 0) {
+             attemptPrint();
+          }
+
+          setTimeout(() => {
+              if (!printHasBeenTriggered) {
+                 attemptPrint();
+              }
+          }, 3500);
+      };
+    }
+
+    function updateAlertsModalList() {
+      let modalList = document.getElementById("alertsModalList");
+      modalList.innerHTML = "";
+      let searchValue = document.getElementById("modalSearchInput").value.trim().toLowerCase();
+      let filteredAlerts = alerts.filter(alertObj =>
+        alertObj.name.toLowerCase().includes(searchValue) ||
+        alertObj.reason.toLowerCase().includes(searchValue)
+      );
+
+      if (filteredAlerts.length === 0) {
+        modalList.innerHTML = "<li class='text-center p-4 text-muted'><i class='fas fa-search fa-2x mb-2'></i><br>لا توجد إنذارات تطابق البحث أو لا توجد إنذارات بعد.</li>";
+      }
+
+      filteredAlerts.forEach((alertObj) => {
+        let li = document.createElement("li");
+        li.className = "alert-item d-flex flex-column flex-md-row justify-content-between align-items-md-start p-3";
+
+        let violationDisplayName = (violationTypes.find(v => v.id === alertObj.type) || {}).name || alertObj.type;
+        let typeClass = 'text-primary';
+        if (violationDisplayName.toLowerCase().includes('عقوبة') || violationDisplayName.toLowerCase().includes('خصم')) typeClass = 'text-danger';
+        else if (violationDisplayName.toLowerCase().includes('إنذار') || violationDisplayName.toLowerCase().includes('تنبيه') || violationDisplayName.toLowerCase().includes('توبيخ') || violationDisplayName.toLowerCase().includes('لفت نظر')) typeClass = 'text-warning';
+        else if (violationDisplayName.toLowerCase().includes('مكافأة') || violationDisplayName.toLowerCase().includes('شكر')) typeClass = 'text-success';
+
+
+        li.innerHTML = `
+          <div class="flex-grow-1 mb-2 mb-md-0 me-md-3">
+            <h6 class="mb-1"><strong class="${typeClass}">${violationDisplayName} ${alertObj.typeNumber ? '(' + alertObj.typeNumber + ')' : ''}</strong></h6>
+            <p class="mb-1"><strong>الموظف:</strong> ${alertObj.name}</p>
+            <p class="mb-1 text-muted small"><em>${alertObj.reason.substring(0,100)}${alertObj.reason.length > 100 ? '...' : ''}</em></p>
+            <small class="text-muted"><i class="fas fa-calendar-alt me-1"></i>${alertObj.date}</small>
+          </div>
+          <div class="btn-group-vertical btn-group-sm mt-2 mt-md-0" role="group" style="min-width: 90px;">
+            <button class="btn btn-outline-primary edit-btn" data-id="${alertObj.id}" title="تعديل">
+              <i class="fas fa-edit"></i> <span class="d-none d-lg-inline">تعديل</span>
+            </button>
+            <button class="btn btn-outline-info print-btn" data-id="${alertObj.id}" title="طباعة">
+              <i class="fas fa-print"></i> <span class="d-none d-lg-inline">طباعة</span>
+            </button>
+            <button class="btn btn-outline-danger delete-btn" data-id="${alertObj.id}" title="حذف">
+              <i class="fas fa-trash-alt"></i> <span class="d-none d-lg-inline">حذف</span>
+            </button>
+          </div>
+        `;
+        modalList.appendChild(li);
+      });
+
+      document.querySelectorAll("#alertsModalList .edit-btn").forEach(button => {
+        button.addEventListener("click", function() {
+          const alertId = this.getAttribute("data-id");
+          editAlert(alertId);
+          let modal = bootstrap.Modal.getInstance(document.getElementById("alertsModal"));
+          if(modal) modal.hide();
+        });
+      });
+      document.querySelectorAll("#alertsModalList .delete-btn").forEach(button => {
+        button.addEventListener("click", function() {
+          const alertId = this.getAttribute("data-id");
+          deleteAlert(alertId);
+        });
+      });
+      document.querySelectorAll("#alertsModalList .print-btn").forEach(button => {
+        button.addEventListener("click", function() {
+          const alertId = this.getAttribute("data-id");
+          const alertToPrint = alerts.find(a => a.id === alertId);
+          if (alertToPrint) printAlert(alertToPrint);
+        });
+      });
+    }
+
+    const modalSearchInput = document.getElementById("modalSearchInput");
+    if (modalSearchInput) {
+        modalSearchInput.addEventListener("input", updateAlertsModalList);
+    }
+
+    function attachMainListeners() {
+      if(!window.mainListenersAttached){
+        if (addBtn) {
+            addBtn.addEventListener("click", function() { addAlert(); });
+        }
+        window.mainListenersAttached = true;
+      }
+    }
+    function goToApp() {
+      document.getElementById("welcomeScreen").style.display = "none";
+      document.getElementById("app-container").style.display = "block"; 
+      attachMainListeners();
+      loadAlertsFromLocalStorage();
+      updateAlertsModalList();
+      document.getElementById("name").focus();
+    }
+    document.getElementById("backToMenuBtn").addEventListener("click", function() {
+      document.getElementById("app-container").style.display = "none";
+      document.getElementById("welcomeScreen").style.display = "flex";
+    });
+    document.getElementById("showAlertsBtn").addEventListener("click", function() {
+      updateAlertsModalList();
+      let modalEl = document.getElementById("alertsModal");
+      let modal = bootstrap.Modal.getInstance(modalEl);
+      if (!modal) {
+        modal = new bootstrap.Modal(modalEl);
+      }
+      modal.show();
+    });
+
+    document.getElementById("printSuccessBtn").addEventListener("click", function() {
+      if(alerts.length > 0) {
+        printAlert(alerts[0]);
+      }
+      else { alert("لا توجد تنبيهات للطباعة. قم بإضافة تنبيه أولاً."); }
+    });
+
+    document.getElementById("backupBtn")?.addEventListener("click", function() {
+      let backupData = {
+        alerts: localStorage.getItem(ALERTS_STORAGE_KEY),
+        customPatterns: localStorage.getItem("customPatterns"),
+        violationTypes: localStorage.getItem("violationTypes"),
+        employeeNames: localStorage.getItem("employeeNames"),
+        defaultAIRule: localStorage.getItem("defaultAIRule"),
+        printSettings: localStorage.getItem(PRINT_SETTINGS_KEY)
+      };
+      let dataStr = JSON.stringify(backupData, null, 2);
+      let blob = new Blob([dataStr], { type: "application/json" });
+      let url = URL.createObjectURL(blob);
+      let a = document.createElement("a");
+      a.href = url;
+      let today = new Date().toISOString().slice(0,10);
+      a.download = `EmperMI_backup_${today}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      alert("تم تنزيل ملف النسخة الاحتياطية بنجاح!");
+    });
+    document.getElementById("restoreBtn")?.addEventListener("click", function() {
+      document.getElementById("restoreFileInput").click();
+    });
+    document.getElementById("restoreFileInput").addEventListener("change", function(event) {
+      let file = event.target.files[0];
+      if (!file) return;
+      if (!file.name.endsWith('.json')) {
+        alert("يرجى اختيار ملف بصيغة JSON.");
+        event.target.value = null;
+        return;
+      }
+      let reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          let backupData = JSON.parse(e.target.result);
+          if (typeof backupData.alerts === 'undefined' && typeof backupData.customPatterns === 'undefined') { 
+              throw new Error("ملف النسخة الاحتياطية غير صالح أو لا يحتوي على البيانات المتوقعة.");
+          }
+
+          if (backupData.alerts) { localStorage.setItem(ALERTS_STORAGE_KEY, backupData.alerts); }
+          if (backupData.customPatterns) { localStorage.setItem("customPatterns", backupData.customPatterns); }
+          if (backupData.violationTypes) { localStorage.setItem("violationTypes", backupData.violationTypes); }
+          if (backupData.employeeNames) { localStorage.setItem("employeeNames", backupData.employeeNames); }
+          if (backupData.defaultAIRule) { localStorage.setItem("defaultAIRule", backupData.defaultAIRule); }
+          if (backupData.printSettings) { localStorage.setItem(PRINT_SETTINGS_KEY, backupData.printSettings); } 
+
+          loadAllData();
+          updateAllUI();
+
+          alert("تم استرجاع البيانات بنجاح. سيتم تحديث الواجهة.");
+        } catch (err) {
+          console.error("Restore error: ", err);
+          alert("خطأ في قراءة ملف النسخة الاحتياطية: " + err.message);
+        } finally {
+            event.target.value = null;
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    function loadAllData() {
+        loadAlertsFromLocalStorage();
+        loadCustomPatterns();
+        loadViolationTypes();
+        loadEmployeeNames();
+        loadPrintSettings();
+        defaultAIRule = localStorage.getItem("defaultAIRule") || "تم توجيه {violationType} للموظف {name} نتيجة العمل الغير جدي، ولذلك تم تطبيق عقوبة. نرجو منكم الإلتزام بالقوانين الخاصة بشركتنا لتجنب تكرار هذه المخالفات.";
+    }
+
+    function updateAllUI() {
+        updateAlertsModalList();
+        updateCustomPatternsList();
+        updateReasonModeDropdown();
+        updateViolationTypesList();
+        updateViolationTypeDropdown();
+        updateEmployeeDatalist();
+        updateEmployeeList();
+        loadPrintSettings(); 
+
+        const reasonModeSelect = document.getElementById("reasonMode");
+        if (reasonModeSelect) {
+            reasonModeSelect.dispatchEvent(new Event('change'));
+        }
+
+        const nameField = document.getElementById("name");
+        if (nameField && nameField.value.trim() && reasonModeSelect && reasonModeSelect.value === "ai") {
+            const aiReasonField = document.getElementById("aiReason");
+            if (aiReasonField) aiReasonField.value = generateAIReason();
+        }
+    }
+
+    (function createRestoreInput() {
+      if (!document.getElementById("restoreFileInput")) {
+        let input = document.createElement("input");
+        input.type = "file";
+        input.id = "restoreFileInput";
+        input.style.display = "none";
+        input.accept = ".json";
+        document.body.appendChild(input);
+      }
+    })();
+    let violationTypes = [];
+    const DEFAULT_VIOLATION_TYPES = [
+        { id: "default_warning_main", name: "إنذار" }
+    ];
+    function loadViolationTypes() {
+      let data = localStorage.getItem("violationTypes");
+      if (data) {
+        try {
+            violationTypes = JSON.parse(data);
+            if (!Array.isArray(violationTypes) || violationTypes.some(vt => typeof vt.id === 'undefined' || typeof vt.name === 'undefined')) {
+                 violationTypes = [...DEFAULT_VIOLATION_TYPES];
+                 saveViolationTypes();
+            }
+            if (violationTypes.length === 0) {
+                 violationTypes = [...DEFAULT_VIOLATION_TYPES];
+                 saveViolationTypes();
+            }
+        } catch (e) {
+            violationTypes = [...DEFAULT_VIOLATION_TYPES];
+            saveViolationTypes();
+        }
+      } else {
+        violationTypes = [...DEFAULT_VIOLATION_TYPES];
+        saveViolationTypes();
+      }
+    }
+    function saveViolationTypes() {
+      localStorage.setItem("violationTypes", JSON.stringify(violationTypes));
+    }
+    function updateViolationTypeDropdown() {
+      let typeSelect = document.getElementById("type");
+      if (typeSelect) {
+        let currentSelection = typeSelect.value;
+        typeSelect.innerHTML = "";
+        violationTypes.forEach(vt => {
+          let option = document.createElement("option");
+          option.value = vt.id;
+          option.text = vt.name;
+          typeSelect.appendChild(option);
+        });
+        if (violationTypes.some(vt => vt.id === currentSelection)) {
+            typeSelect.value = currentSelection;
+        } else if (typeSelect.options.length > 0) {
+            typeSelect.selectedIndex = 0;
+        }
+      }
+    }
+    function updateViolationTypesList() {
+      let listDiv = document.getElementById("violationTypesList");
+      if (!listDiv) return;
+      listDiv.innerHTML = "";
+      if (violationTypes.length === 0) {
+        listDiv.innerHTML = "<p class='text-muted text-center p-3'><i class='fas fa-folder-open fa-2x mb-2'></i><br>لا توجد أنواع مخالفات معرفة.</p>";
+      } else {
+        violationTypes.forEach(vt => {
+            let div = document.createElement("div");
+            div.className = "d-flex justify-content-between align-items-center mb-2 p-3 border rounded bg-light";
+            div.innerHTML = `
+            <span class="fw-bold">${vt.name}</span>
+            <button class="btn btn-sm btn-outline-danger" onclick="deleteViolationType('${vt.id}')" title="حذف نوع المخالفة">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+            `;
+            listDiv.appendChild(div);
+        });
+      }
+    }
+
+    function deleteViolationType(idToDelete) {
+      if (alerts.some(alert => alert.type === idToDelete)) {
+        alert("لا يمكن حذف نوع المخالفة هذا لأنه مستخدم في تنبيهات حالية. يرجى تعديل أو حذف التنبيهات المرتبطة أولاً.");
+        return;
+      }
+      if (!confirm(`هل أنت متأكد من حذف نوع المخالفة هذا؟`)) return;
+      violationTypes = violationTypes.filter(vt => vt.id !== idToDelete);
+      saveViolationTypes();
+      updateViolationTypesList();
+      updateViolationTypeDropdown();
+    }
+    let employeeNames = [];
+    function loadEmployeeNames() {
+      let data = localStorage.getItem("employeeNames");
+      employeeNames = data ? JSON.parse(data) : [];
+      if (!Array.isArray(employeeNames)) employeeNames = [];
+    }
+    function saveEmployeeNames() {
+      localStorage.setItem("employeeNames", JSON.stringify(employeeNames));
+    }
+    function updateEmployeeDatalist() {
+      let datalist = document.getElementById("employeeList");
+      if (!datalist) return;
+      datalist.innerHTML = "";
+      employeeNames.forEach(name => {
+        let option = document.createElement("option");
+        option.value = name;
+        datalist.appendChild(option);
+      });
+    }
+    function updateEmployeeList() {
+      let listDiv = document.getElementById("employeeListDiv");
+      if (!listDiv) return;
+      listDiv.innerHTML = "";
+      if (employeeNames.length === 0) {
+          listDiv.innerHTML = "<p class='text-muted text-center p-3'><i class='fas fa-users-slash fa-2x mb-2'></i><br>لا يوجد موظفون مضافون للقائمة المقترحة.</p>";
+      } else {
+        employeeNames.forEach((name, index) => {
+            let div = document.createElement("div");
+            div.className = "d-flex justify-content-between align-items-center mb-2 p-3 border rounded bg-light";
+            div.innerHTML = `<span class="fw-bold">${name}</span><button class="btn btn-sm btn-outline-danger" onclick="deleteEmployee(${index})" title="حذف الموظف من القائمة"><i class="fas fa-user-minus"></i></button>`;
+            listDiv.appendChild(div);
+        });
+      }
+    }
+    function addEmployee() {
+      let newNameInput = document.getElementById("newEmployeeName");
+      let newName = newNameInput.value.trim();
+      if(newName === "") { alert("يرجى إدخال اسم الموظف"); newNameInput.focus(); return; }
+      if (employeeNames.some(name => name.toLowerCase() === newName.toLowerCase())) {
+          alert("اسم الموظف موجود بالفعل في القائمة.");
+          newNameInput.focus();
+          return;
+      }
+      employeeNames.push(newName);
+      employeeNames.sort((a, b) => a.localeCompare(b, 'ar'));
+      saveEmployeeNames();
+      updateEmployeeDatalist();
+      updateEmployeeList();
+      newNameInput.value = "";
+      newNameInput.focus();
+    }
+    function deleteEmployee(index) {
+      const employeeNameToDelete = employeeNames[index];
+      if(!confirm(`هل أنت متأكد من حذف الموظف "${employeeNameToDelete}" من قائمة الاقتراحات؟`)){
+            return;
+      }
+      employeeNames.splice(index, 1);
+      saveEmployeeNames();
+      updateEmployeeDatalist();
+      updateEmployeeList();
+    }
+
+    const SMART_ANALYSIS_THRESHOLD = 3;
+    const NEGATIVE_VIOLATION_KEYWORDS = ["إنذار", "عقوبة", "خصم", "توبيخ", "لفت نظر"];
+
+    function displayEmployeeMonitoring() {
+        const employeeListContainer = document.getElementById("employeeMonitoringList");
+        const searchInput = document.getElementById("analysisSearchInput");
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+
+        if (!employeeListContainer) {
+            console.error("Employee monitoring list container not found!");
+            return;
+        }
+
+        employeeListContainer.innerHTML = '<p class="text-center text-info p-3"><i class="fas fa-spinner fa-spin"></i> جاري تحميل قائمة الموظفين...</p>';
+
+        const filteredEmployeeNames = employeeNames.filter(name => name.toLowerCase().includes(searchTerm));
+
+        if (filteredEmployeeNames.length === 0 && employeeNames.length > 0) {
+            employeeListContainer.innerHTML = '<p class="text-center text-muted p-4"><i class="fas fa-search-minus"></i> لا يوجد موظفون يطابقون بحثك.</p>';
+            return;
+        }
+        if (employeeNames.length === 0) {
+            employeeListContainer.innerHTML = '<p class="text-center text-muted p-4"><i class="fas fa-users-slash fa-2x mb-2"></i><br>لا يوجد موظفون مسجلون في قائمة الاقتراحات بعد.<br><small>قم بإضافة موظفين من الإعدادات أو عند إضافة إنذار جديد.</small></p>';
+            return;
+        }
+
+        const allEmployeeNegativeAlertsCount = alerts.reduce((acc, alert) => {
+            const violationTypeObj = violationTypes.find(vt => vt.id === alert.type);
+            if (violationTypeObj && violationTypeObj.name) {
+                const isNegative = NEGATIVE_VIOLATION_KEYWORDS.some(keyword =>
+                    violationTypeObj.name.toLowerCase().includes(keyword.toLowerCase())
+                );
+                if (isNegative) {
+                    acc[alert.name] = (acc[alert.name] || 0) + 1;
+                }
+            }
+            return acc;
+        }, {});
+
+
+        let listHTML = '<ul class="list-group">';
+        filteredEmployeeNames.forEach(empName => {
+            const count = allEmployeeNegativeAlertsCount[empName] || 0;
+            let itemClass = "list-group-item";
+            let badgeClass = "bg-secondary";
+            let detailButtonHTML = "";
+
+            if (count >= SMART_ANALYSIS_THRESHOLD) {
+                itemClass += " list-group-item-danger";
+                badgeClass = "bg-danger";
+                detailButtonHTML = `<button class="btn btn-sm btn-warning show-analysis-detail-btn" data-employee-name="${empName}" data-violation-count="${count}" title="عرض تفاصيل التحليل"><i class="fas fa-search-plus"></i> عرض التفاصيل</button>`;
+            } else if (count > 0) {
+                badgeClass = "bg-warning text-dark";
+            }
+
+
+            listHTML += `
+                <li class="${itemClass}">
+                    <span class="employee-name">${empName}</span>
+                    <div>
+                        <span class="badge rounded-pill violation-count me-2 ${badgeClass}">${count} مخالفات</span>
+                        ${detailButtonHTML}
+                    </div>
+                </li>
+            `;
+        });
+        listHTML += '</ul>';
+        employeeListContainer.innerHTML = listHTML;
+
+        document.querySelectorAll('.show-analysis-detail-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const employeeName = this.getAttribute('data-employee-name');
+                const violationCount = parseInt(this.getAttribute('data-violation-count'), 10);
+                showEmployeeAnalysisDetail(employeeName, violationCount);
+            });
+        });
+    }
+
+    function showEmployeeAnalysisDetail(employeeName, violationCount) {
+        const detailContentEl = document.getElementById("employeeAnalysisDetailContent");
+        const detailModalEl = document.getElementById("employeeAnalysisDetailModal");
+        const detailModalLabel = document.getElementById("employeeAnalysisDetailModalLabel");
+
+        if (!detailContentEl || !detailModalEl || !detailModalLabel) {
+            console.error("Detail modal elements not found!");
+            return;
+        }
+
+        detailModalLabel.innerHTML = `<i class="fas fa-exclamation-triangle"></i> تفاصيل تحليل الموظف: ${employeeName}`;
+
+        const smsWarningText = `تحذير: تم تسجيل ${violationCount} مخالفات باسمك (${employeeName}). قد يؤثر هذا على استمراريتك في العمل. يرجى مراجعة الإدارة.`;
+
+        detailContentEl.innerHTML = `
+            <div class="employee-analysis-card">
+                <h5 class="mb-2"><i class="fas fa-user-tie text-danger"></i> الموظف: ${employeeName}</h5>
+                <p class="mb-1"><strong>عدد المخالفات السلبية المسجلة:</strong> <span class="badge bg-danger fs-6">${violationCount}</span></p>
+                <p class="text-danger fw-bold mt-2"><i class="fas fa-exclamation-triangle"></i> تحذير: ربما قد تُطرد من العمل بسبب تكرار المخالفات.</p>
+
+                <div class="sms-simulation-box mt-3">
+                    <p class="sms-to-maryam"><i class="fas fa-mobile-alt"></i> الآنسة مريم، رجاءً تصرفي الآن وقومي بإرسال رسالة نصية لهذا الموظف تتضمن التحذير التالي (يمكنك نسخ النص بالضغط عليه):</p>
+                    <div class="sms-content-to-copy" title="اضغط لنسخ النص" onclick="copyToClipboard(this)">${smsWarningText}</div>
+                </div>
+            </div>
+        `;
+
+        let modalInstance = bootstrap.Modal.getInstance(detailModalEl);
+        if (!modalInstance) {
+            modalInstance = new bootstrap.Modal(detailModalEl);
+        }
+        modalInstance.show();
+    }
+
+    function copyToClipboard(element) {
+        const textToCopy = element.innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = element.innerHTML;
+            const checkIcon = ' <i class="fas fa-check text-success"></i>';
+            element.innerHTML = 'تم النسخ!' + checkIcon;
+            setTimeout(() => {
+                element.innerHTML = originalText;
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            alert('فشل نسخ النص. يرجى نسخه يدوياً.');
+        });
+    }
+
+    function resetSystem() {
+        const confirmationMessage = "تحذير خطير!\n\n" +
+                                "أنت على وشك إعادة تهيئة النظام بالكامل.\n" +
+                                "سيؤدي هذا إلى حذف جميع البيانات التالية بشكل نهائي:\n" +
+                                "- جميع الإنذارات والعقوبات المسجلة.\n" +
+                                "- جميع الأنماط المخصصة.\n" +
+                                "- جميع أنواع المخالفات المخصصة.\n" +
+                                "- جميع أسماء الموظفين المقترحة.\n" +
+                                "- نمط الذكاء الاصطناعي المخصص.\n" +
+                                "- إعدادات الطباعة المخصصة.\n\n" +
+                                "لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد تمامًا من رغبتك في المتابعة؟";
+
+        if (confirm(confirmationMessage)) {
+            if (confirm("للتأكيد مرة أخرى: هل أنت متأكد 100% من أنك تريد حذف كل شيء وإعادة النظام إلى حالته الافتراضية؟")) {
+
+                localStorage.removeItem(ALERTS_STORAGE_KEY);
+                localStorage.removeItem("customPatterns");
+                localStorage.removeItem("violationTypes");
+                localStorage.removeItem("employeeNames");
+                localStorage.removeItem("defaultAIRule");
+                localStorage.removeItem(PRINT_SETTINGS_KEY);
+
+                alerts = [];
+                customPatterns = [];
+                violationTypes = [];
+                employeeNames = [];
+                defaultAIRule = "تم توجيه {violationType} للموظف {name} نتيجة العمل الغير جدي، ولذلك تم تطبيق عقوبة. نرجو منكم الإلتزام بالقوانين الخاصة بشركتنا لتجنب تكرار هذه المخالفات.";
+                editingPatternId = null;
+                editingIndex = -1;
+                
+                loadAllData(); 
+                updateAllUI();
+
+                if (document.getElementById("app-container").style.display === "block") {
+                    nameInput.value = "";
+                    document.getElementById("aiReason").value = "";
+                    document.getElementById("manualReason").value = "";
+                    typeNumberInput.value = "";
+                    const typeSelect = document.getElementById("type");
+                    if (typeSelect.options.length > 0) typeSelect.selectedIndex = 0;
+                    document.getElementById("reasonMode").value = "manual";
+                    document.getElementById("reasonMode").dispatchEvent(new Event('change'));
+                }
+
+                alert("تمت إعادة تهيئة النظام بنجاح. تم حذف جميع البيانات وعاد النظام إلى الإعدادات الافتراضية، بما في ذلك إعدادات الطباعة.");
+
+                let settingsModalEl = document.getElementById("settingsModal");
+                let settingsModal = bootstrap.Modal.getInstance(settingsModalEl);
+                if (settingsModal) {
+                    settingsModal.hide();
+                }
+            } else {
+                alert("تم إلغاء عملية إعادة تهيئة النظام.");
+            }
+        } else {
+            alert("تم إلغاء عملية إعادة تهيئة النظام.");
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const splashScreen = document.getElementById('splashScreen');
+      const originalWelcomeScreen = document.getElementById('welcomeScreen');
+      const appContainer = document.getElementById('app-container');
+
+      if (splashScreen) splashScreen.style.display = 'flex'; 
+      if (originalWelcomeScreen) originalWelcomeScreen.style.display = 'none';
+      if (appContainer) appContainer.style.display = 'none';
+
+      setTimeout(() => {
+          if (splashScreen) {
+              splashScreen.classList.add('hidden'); 
+              setTimeout(() => {
+                  splashScreen.style.display = 'none';
+                  if (originalWelcomeScreen) {
+                      originalWelcomeScreen.style.display = 'flex'; 
+                  } else if (appContainer) { 
+                      appContainer.style.display = 'block';
+                  }
+              }, 700); 
+          } else {
+              if (originalWelcomeScreen) {
+                originalWelcomeScreen.style.display = 'flex';
+              } else if (appContainer) {
+                appContainer.style.display = 'block';
+              }
+          }
+      }, 3000); 
+
+      loadAllData();
+      updateAllUI();
+      attachMainListeners();
+
+      const addPattBtn = document.getElementById("addPatternBtn");
+      if(addPattBtn) {
+          addPattBtn.addEventListener("click", function(){
+            let nameInput = document.getElementById("patternName");
+            let textInput = document.getElementById("patternText");
+            let name = nameInput.value.trim();
+            let text = textInput.value.trim();
+
+            if(!name) { alert("يرجى إدخال اسم النمط."); nameInput.focus(); return; }
+            if(!text) { alert("يرجى إدخال نص النمط."); textInput.focus(); return; }
+
+            if(editingPatternId) {
+              customPatterns = customPatterns.map(p => {
+                if(p.id === editingPatternId) { return { ...p, name: name, text: text }; }
+                return p;
+              });
+              editingPatternId = null;
+              addPattBtn.innerHTML = '<i class="fas fa-plus-circle"></i> إضافة النمط';
+              alert("تم تعديل النمط بنجاح.");
+            } else {
+              if (customPatterns.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+                alert("يوجد نمط آخر بنفس الاسم. يرجى اختيار اسم مختلف.");
+                nameInput.focus();
+                return;
+              }
+              let pattern = { id: Date.now().toString(), name: name, text: text };
+              customPatterns.push(pattern);
+              alert("تم إضافة النمط بنجاح.");
+            }
+            saveCustomPatterns();
+            updateCustomPatternsList();
+            updateReasonModeDropdown();
+            nameInput.value = "";
+            textInput.value = "";
+            nameInput.focus();
+          });
+      }
+
+      const addVioTypeBtn = document.getElementById("addViolationTypeBtn");
+      if (addVioTypeBtn) {
+          addVioTypeBtn.addEventListener("click", function(){
+            let newTypeNameInput = document.getElementById("newViolationType");
+            let newTypeName = newTypeNameInput.value.trim();
+            if (!newTypeName) { alert("يرجى إدخال اسم نوع المخالفة"); newTypeNameInput.focus(); return; }
+
+            let id = "vt_" + newTypeName.toLowerCase().replace(/\s+/g, '_').replace(/[^\w\sأ-ي]/gi, '').replace(/\s/g,'_') + "_" + Date.now().toString().slice(-5);
+
+            if (violationTypes.some(vt => vt.name.toLowerCase() === newTypeName.toLowerCase())) {
+                alert("نوع المخالفة بهذا الاسم موجود بالفعل.");
+                newTypeNameInput.focus();
+                return;
+            }
+            violationTypes.push({ id, name: newTypeName });
+            saveViolationTypes();
+            updateViolationTypesList();
+            updateViolationTypeDropdown();
+            newTypeNameInput.value = "";
+            newTypeNameInput.focus();
+            alert("تم إضافة نوع المخالفة بنجاح.");
+          });
+      }
+
+      const addEmpBtn = document.getElementById("addEmployeeBtn");
+      if(addEmpBtn) { addEmpBtn.addEventListener("click", addEmployee); }
+
+      const reasonModeSelectInit = document.getElementById("reasonMode");
+        if (reasonModeSelectInit) {
+            reasonModeSelectInit.dispatchEvent(new Event('change'));
+        }
+
+      const employeeMonitoringButton = document.getElementById("smartAnalysisBtn");
+      if (employeeMonitoringButton) {
+          employeeMonitoringButton.addEventListener("click", function() {
+            displayEmployeeMonitoring();
+            let modalEl = document.getElementById("smartAnalysisModal");
+            let modal = bootstrap.Modal.getInstance(modalEl);
+            if (!modal) {
+                modal = new bootstrap.Modal(modalEl);
+            }
+            modal.show();
+          });
+      }
+
+      const analysisSearchInputEl = document.getElementById("analysisSearchInput");
+      if (analysisSearchInputEl) {
+          analysisSearchInputEl.addEventListener("input", function() {
+              displayEmployeeMonitoring();
+          });
+      }
+
+      const resetSystemButton = document.getElementById("resetSystemBtn");
+      if (resetSystemButton) {
+          resetSystemButton.addEventListener("click", resetSystem);
+      }
+
+      const savePrintSettingsButton = document.getElementById("savePrintSettingsBtn");
+      if (savePrintSettingsButton) {
+          savePrintSettingsButton.addEventListener("click", updateAndSavePrintSettings);
+      }
+
+    });
+  </script>
+</body>
+</html>
